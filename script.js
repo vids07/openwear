@@ -2,7 +2,6 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
 const tryonSheet = $('#tryon-sheet');
-const contactSheet = $('#contact-sheet');
 const signupSheet = $('#signup-sheet');
 const signupForm = $('#signup-form');
 const signupError = $('#signup-error');
@@ -149,7 +148,6 @@ signupSheet.addEventListener('close', () => {
 });
 
 $$('.open-tryon').forEach((button) => button.addEventListener('click', () => requestTryon(button.querySelector('img')?.src)));
-$$('.open-contact').forEach((button) => button.addEventListener('click', () => contactSheet.showModal()));
 
 cameraButton.addEventListener('click', () => (stream ? stopCamera() : startCamera()));
 tryonSheet.addEventListener('close', stopCamera);

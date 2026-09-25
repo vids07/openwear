@@ -129,3 +129,9 @@ details{border-bottom:0}
 .metric{min-height:0;padding:0}
 /* columns sized to content, so the gap between them is the same on both sides */
 .metric{grid-template-columns:max-content max-content minmax(0,1fr);column-gap:56px}
+
+/* ---- Contact CTAs are links to the booking page --------------------- */
+.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.stack-button{text-decoration:none}
+.text-link{text-decoration:underline;text-underline-offset:2px}
+.tryon-next{margin:18px 0 0;padding-top:17px;border-top:1px solid var(--line);font-size:13px;color:#675757}
