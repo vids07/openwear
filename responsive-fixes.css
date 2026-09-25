@@ -10,6 +10,24 @@
 .service-stack code{font-size:11px;letter-spacing:.02em}
 .footer-brand{font-family:Georgia,'Times New Roman',serif;color:var(--ink);font-size:20px;letter-spacing:-.7px}
 
+/* Live camera stage inside the try-on dialog. */
+.tryon-content{padding-top:40px}
+.tryon-stage{position:relative;margin:0 0 24px;border-radius:13px;overflow:hidden;background:#1d0d0d;aspect-ratio:3/4;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tryon-stage video{display:block;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.tryon-garment{position:absolute;right:12px;bottom:12px;width:76px;border-radius:10px;background:#fff;border:2px solid rgba(255,255,255,.9);box-shadow:0 8px 22px rgba(0,0,0,.34)}
+.tryon-content h3{margin-top:0}
+#camera-demo{min-width:190px;margin-top:6px}
+#camera-demo:disabled{opacity:.6;cursor:default}
+
+/* Three-step flow: numbered pills sitting on a single connector line. */
+.steps-intro{max-width:none}
+.steps{position:relative;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:38px 0 0;padding:0}
+.steps::before{content:'';position:absolute;top:25px;left:14%;right:14%;height:1px;background:linear-gradient(90deg,transparent,rgba(23,4,4,.14) 18%,rgba(23,4,4,.14) 82%,transparent)}
+.step{position:relative;text-align:center;padding:0 12px}
+.step-pill{position:relative;z-index:1;display:inline-flex;align-items:center;gap:11px;height:50px;padding:0 23px 0 8px;border:0;border-radius:999px;background:linear-gradient(180deg,#fff,#fdfafb);box-shadow:0 1px 2px rgba(23,4,4,.04),0 4px 12px rgba(23,4,4,.05),0 12px 28px rgba(23,4,4,.045);font-size:15px;line-height:1;white-space:nowrap}
+.step-num{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#cf6a92,var(--pink) 72%);color:#fff;font-size:13px;box-shadow:0 2px 6px rgba(189,79,123,.28)}
+.step p{margin:15px 0 0;font-size:13px;line-height:1.5;color:#6a5b5b}
+
 /* Responsive geometry matched to the reference storefront. */
 .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:clamp(30px,4.5vw,60px)}
 .split-grid{grid-template-columns:minmax(0,1fr) minmax(0,580px);gap:clamp(28px,4vw,50px)}
@@ -40,6 +58,13 @@
 
 @media (min-width:761px) and (max-width:800px){
   .garment-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media (max-width:700px){
+  .steps{grid-template-columns:1fr;gap:18px}
+  .steps::before{top:25px;bottom:25px;left:25px;right:auto;width:1px;height:auto;background:linear-gradient(180deg,transparent,rgba(23,4,4,.14) 12%,rgba(23,4,4,.14) 88%,transparent)}
+  .step{text-align:left;padding:0}
+  .step p{margin-left:53px}
 }
 
 @media (max-width:620px){

@@ -44,7 +44,21 @@
       <div class="page-grid one-column">
         <div class="eyebrow">How it works</div>
         <h2>Three steps. That is the whole thing.</h2>
-        <p class="section-intro"><strong>1.</strong> Your shopper taps <strong>Try-On</strong> on a product page. <strong>2.</strong> Their camera turns on. <strong>3.</strong> They see your garment on themselves, moving live. Nothing to download, nothing to upload.</p>
+        <p class="section-intro steps-intro">Nothing to download, nothing to upload — your shopper goes from product page to wearing it in about ten seconds.</p>
+        <ol class="steps">
+          <li class="step">
+            <div class="step-pill"><span class="step-num">1</span>Tap Try-On</div>
+            <p>On any product page in your store.</p>
+          </li>
+          <li class="step">
+            <div class="step-pill"><span class="step-num">2</span>Camera turns on</div>
+            <p>Right in the browser — no app to install.</p>
+          </li>
+          <li class="step">
+            <div class="step-pill"><span class="step-num">3</span>See it on you</div>
+            <p>Your garment, live, moving with them.</p>
+          </li>
+        </ol>
         <div class="garment-grid">
           <button class="garment open-tryon" aria-label="Try on black hoodie"><span class="try-badge">✦&nbsp; Try-On</span><img src="https://anywear.decart.ai/assets/one-pager/garment2.png" alt="Garment to try on" /></button>
           <button class="garment open-tryon" aria-label="Try on blue sweater"><span class="try-badge">✦&nbsp; Try-On</span><img src="https://anywear.decart.ai/assets/one-pager/garment3.png" alt="Garment to try on" /></button>
@@ -140,7 +154,14 @@
   </footer>
 
   <dialog class="sheet" id="contact-sheet"><form method="dialog"><button class="close" aria-label="Close">×</button></form><div class="sheet-body"><h3>Contact us</h3><p>Tell us where you sell and we’ll get you set up — Shopify, WooCommerce, a marketplace, or a custom store. We reply the same day.</p><label>Your store<input type="text" placeholder="yourstore.com" /></label><label>Your email<input type="email" placeholder="you@yourstore.com" /></label><button class="button button-dark sheet-action">Send</button><button class="skip" formmethod="dialog">I’m still looking around</button></div></dialog>
-  <dialog class="tryon-sheet" id="tryon-sheet"><form method="dialog"><button class="close" aria-label="Close">×</button></form><div class="tryon-content"><div class="camera-icon">⌾</div><h3>Try it on</h3><p>This is exactly what your shopper sees: camera on, your garment on them, moving in real time.</p><button class="button button-dark" id="camera-demo">Turn on camera</button><small>Demo preview — no camera footage is sent or stored.</small></div></dialog>
+  <dialog class="tryon-sheet" id="tryon-sheet"><form method="dialog"><button class="close" aria-label="Close">×</button></form><div class="tryon-content">
+    <div class="tryon-stage" id="tryon-stage" hidden><video id="tryon-video" playsinline autoplay muted></video><img class="tryon-garment" id="tryon-garment" alt="Selected garment" /></div>
+    <div class="camera-icon" id="tryon-icon">⌾</div>
+    <h3 id="tryon-title">Try it on</h3>
+    <p id="tryon-copy">This is exactly what your shopper sees: camera on, your garment on them, moving in real time.</p>
+    <button class="button button-dark" id="camera-demo">Turn on camera</button>
+    <small id="tryon-note">Your camera runs on your device only — nothing is uploaded, recorded, or sent anywhere.</small>
+  </div></dialog>
   <script src="script.js"></script>
 </body>
 </html>
