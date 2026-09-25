@@ -3,6 +3,9 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 
 const tryonSheet = $('#tryon-sheet');
 const contactSheet = $('#contact-sheet');
+const signupSheet = $('#signup-sheet');
+const signupForm = $('#signup-form');
+const signupError = $('#signup-error');
 
 const stage = $('#tryon-stage');
 const video = $('#tryon-video');
@@ -88,7 +91,64 @@ const openTryon = (garmentSrc) => {
   tryonSheet.showModal();
 };
 
-$$('.open-tryon').forEach((button) => button.addEventListener('click', () => openTryon(button.querySelector('img')?.src)));
+// --- signup gate -----------------------------------------------------
+// No backend yet, so the account lives in this browser only.
+const SIGNUP_KEY = 'openwear.account';
+
+const readAccount = () => {
+  try {
+    return JSON.parse(localStorage.getItem(SIGNUP_KEY) || 'null');
+  } catch {
+    return null;
+  }
+};
+
+const saveAccount = (account) => {
+  try {
+    localStorage.setItem(SIGNUP_KEY, JSON.stringify(account));
+  } catch {
+    // private mode or blocked storage: the signup still works for this visit
+  }
+};
+
+let account = readAccount();
+let pendingGarment = null;
+
+const showSignupError = (message) => {
+  signupError.textContent = message;
+  signupError.hidden = false;
+};
+
+const requestTryon = (garmentSrc) => {
+  if (account) {
+    openTryon(garmentSrc);
+    return;
+  }
+  pendingGarment = garmentSrc;
+  signupError.hidden = true;
+  signupForm.reset();
+  signupSheet.showModal();
+};
+
+signupForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const name = signupForm.elements.name.value.trim();
+  const email = signupForm.elements.email.value.trim();
+  if (!name) return showSignupError('Please enter your name.');
+  if (!/^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(email)) return showSignupError('Please enter a valid email address.');
+
+  account = { name, email, at: new Date().toISOString() };
+  saveAccount(account);
+  signupSheet.close();
+  openTryon(pendingGarment);
+  pendingGarment = null;
+});
+
+signupSheet.addEventListener('close', () => {
+  pendingGarment = null;
+});
+
+$$('.open-tryon').forEach((button) => button.addEventListener('click', () => requestTryon(button.querySelector('img')?.src)));
 $$('.open-contact').forEach((button) => button.addEventListener('click', () => contactSheet.showModal()));
 
 cameraButton.addEventListener('click', () => (stream ? stopCamera() : startCamera()));

@@ -73,6 +73,7 @@
         <div class="eyebrow">What try-on changes</div>
         <div class="metric"><h3>More people buy.</h3><div class="value">13–16%</div><p>Average conversion lift reported by online stores that add virtual try-on to product pages.</p></div>
         <div class="metric"><h3>Fewer returns.</h3><div class="value">Up to 40%</div><p>Shopify reports up to 40% fewer returns for stores using 3D and AR product experiences.</p></div>
+        <div class="metric"><h3>Longer visits.</h3><div class="value">7.8 minutes</div><p>Average session, from a shopper’s first try-on to their last.</p></div>
       </div>
     </section>
 
@@ -85,8 +86,8 @@
           <article class="option-card option-light">
             <div class="option-label"><span>1</span> Step 1 · see it for yourself</div>
             <h3>Try it before anything else</h3>
-            <p><strong>Nothing to sign up for.</strong> Turn on your camera and put a garment on yourself. That is the same experience your shoppers get on your product page.</p>
-            <button class="stack-button stack-light open-tryon"><span>Try it on</span><small>no signup, no install</small></button>
+            <p><strong>One quick signup.</strong> Create an account, turn on your camera, and put a garment on yourself. That is the same experience your shoppers get on your product page.</p>
+            <button class="stack-button stack-light open-tryon"><span>Try it on</span><small>sign up, then ten seconds</small></button>
           </article>
           <article class="option-card option-accent">
             <div class="option-label"><span>2</span> Step 2 · put it on your store</div>
@@ -102,7 +103,26 @@
       </div>
     </section>
 
-    <section class="qa section-pink" id="qa">
+    <section class="platforms section-pink" id="platforms">
+      <div class="page-grid one-column">
+        <div class="eyebrow">Integrations</div>
+        <h2>Built for the platforms<br class="desktop-only" /> you already sell on.</h2>
+        <p class="section-intro">You do not migrate, rebuild, or change themes. Try-on sits on top of the storefront you already run, and we handle the setup for whichever platform that is.</p>
+        <ul class="platform-grid">
+          <li class="platform"><strong>Shopify</strong><span>Product pages across any theme</span></li>
+          <li class="platform"><strong>WooCommerce</strong><span>WordPress storefronts</span></li>
+          <li class="platform"><strong>BigCommerce</strong><span>Catalog-wide rollout</span></li>
+          <li class="platform"><strong>Wix</strong><span>Wix Stores product pages</span></li>
+          <li class="platform"><strong>Squarespace</strong><span>Commerce product pages</span></li>
+          <li class="platform"><strong>Adobe Commerce</strong><span>Magento storefronts</span></li>
+          <li class="platform"><strong>Marketplaces</strong><span>Multi-brand and reseller catalogs</span></li>
+          <li class="platform"><strong>Custom storefronts</strong><span>Headless or your own stack</span></li>
+        </ul>
+        <p class="caption-wide">Not on the list? Tell us what you sell on and we will look at it with you.</p>
+      </div>
+    </section>
+
+    <section class="qa section-white" id="qa">
       <div class="page-grid one-column">
         <div class="eyebrow">Common questions</div>
         <h2>What store owners ask us first.</h2>
@@ -118,7 +138,7 @@
       </div>
     </section>
 
-    <section class="voices section-white" id="voices">
+    <section class="voices section-pink" id="voices">
       <div class="page-grid one-column">
         <div class="eyebrow">Where it fits</div>
         <h3 class="voices-title">One service, many kinds of stores.</h3>
@@ -137,6 +157,20 @@
     <div class="page-grid footer-row"><div><strong class="footer-brand">Openwear</strong><span>Real-time virtual try-on</span></div><nav><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Service Policy</a><a href="#top">openwear</a></nav></div>
   </footer>
 
+  <dialog class="sheet" id="signup-sheet">
+    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+    <div class="sheet-body">
+      <h3>Create your account</h3>
+      <p>Sign up once, then you can open try-on for any garment on this page.</p>
+      <form id="signup-form" novalidate>
+        <label>Your name<input type="text" name="name" autocomplete="name" placeholder="Alex Moore" required /></label>
+        <label>Your email<input type="email" name="email" autocomplete="email" placeholder="you@yourstore.com" required /></label>
+        <p class="form-error" id="signup-error" role="alert" hidden></p>
+        <button class="button button-dark sheet-action" type="submit">Create account and try it on</button>
+      </form>
+      <small class="sheet-note">This demo keeps your details in this browser only — nothing is sent anywhere.</small>
+    </div>
+  </dialog>
   <dialog class="sheet" id="contact-sheet"><form method="dialog"><button class="close" aria-label="Close">×</button></form><div class="sheet-body"><h3>Contact us</h3><p>Tell us where you sell — Shopify, WooCommerce, a marketplace, or a custom store — and we will get back to you.</p><label>Your store<input type="text" placeholder="yourstore.com" /></label><label>Your email<input type="email" placeholder="you@yourstore.com" /></label><button class="button button-dark sheet-action">Send</button><button class="skip" formmethod="dialog">I’m still looking around</button></div></dialog>
   <dialog class="tryon-sheet" id="tryon-sheet"><form method="dialog"><button class="close" aria-label="Close">×</button></form><div class="tryon-content">
     <div class="tryon-stage" id="tryon-stage" hidden><video id="tryon-video" playsinline autoplay muted></video><img class="tryon-garment" id="tryon-garment" alt="Selected garment" /></div>

@@ -92,3 +92,40 @@
 .plain-points{list-style:none;margin:22px 0 0;padding:0}
 .plain-points li{position:relative;padding:0 0 0 20px;margin-top:12px;font-size:14px;line-height:1.45;color:#5a4450}
 .plain-points li::before{content:'';position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--pink)}
+
+/* ---- Integrations grid ---------------------------------------------- */
+.platforms{padding:80px 0 84px}
+.platforms .section-intro{margin-top:15px}
+.platform-grid{list-style:none;margin:34px 0 20px;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.platform{background:#fff;border:1px solid var(--line);border-radius:11px;padding:17px 16px 16px;min-height:100px;display:flex;flex-direction:column;gap:7px}
+.platform::before{content:'';width:18px;height:2px;border-radius:2px;background:var(--pink);opacity:.8}
+.platform strong{font-size:16px;font-weight:500;letter-spacing:-.2px;margin-top:auto}
+.platform span{font-size:12.5px;line-height:1.4;color:#6d5d5d}
+
+/* ---- Signup sheet ---------------------------------------------------- */
+.sheet-note{display:block;margin-top:16px;font-size:12px;line-height:1.45;color:#847575}
+.form-error{margin:0 0 4px;font-size:13px;color:#a3243f}
+/* .sheet form{height:0} targets the close-button form; opt this one out */
+#signup-form{height:auto;margin:0}
+
+@media (max-width:800px){
+  .platforms{padding:58px 0}
+  .platform-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){
+  .platform-grid{grid-template-columns:1fr;gap:10px}
+  .platform{min-height:auto}
+}
+
+/* ---- No divider rules in the metrics table or the FAQ ---------------- */
+.metric{border-top:0}
+.metric:last-of-type{border-bottom:0}
+.accordion{border-top:0}
+details{border-bottom:0}
+
+/* ---- Metrics: one declared rhythm, not min-height + borders ---------- */
+.numbers .page-grid{display:grid;gap:36px}
+.numbers .eyebrow{margin-bottom:0}
+.metric{min-height:0;padding:0}
+/* columns sized to content, so the gap between them is the same on both sides */
+.metric{grid-template-columns:max-content max-content minmax(0,1fr);column-gap:56px}
