@@ -1,0 +1,12 @@
+.option-card{min-width:0}
+.code-box{overflow:hidden}
+.code-box code{overflow-wrap:anywhere;word-break:break-word}
+.copy-row{min-width:0}
+.copy-row span{min-width:0}
+.copy-row button{flex:0 0 auto}
+.voice-media img{display:block;width:100%;height:100%;object-fit:cover}
+@media (max-width:480px){
+  .option-light .stack-button{width:100%}
+  .copy-row{align-items:flex-start}
+  .copy-row span{line-height:1.35}
+}

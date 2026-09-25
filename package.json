@@ -1,0 +1,10 @@
+{
+  "name": "openwear",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Responsive recreation of the Anywear business landing page",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
+  }
+}
