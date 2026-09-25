@@ -5,6 +5,10 @@
 .copy-row span{min-width:0}
 .copy-row button{flex:0 0 auto}
 .voice-media img{display:block;width:100%;height:100%;object-fit:cover}
+.brand-wordmark{color:var(--ink);font-family:Georgia,'Times New Roman',serif;font-size:29px;font-weight:700;letter-spacing:-1.7px;text-decoration:none}
+.service-stack{display:flex;align-items:center;min-height:78px}
+.service-stack code{font-size:11px;letter-spacing:.02em}
+.footer-brand{font-family:Georgia,'Times New Roman',serif;color:var(--ink);font-size:20px;letter-spacing:-.7px}
 
 /* Responsive geometry matched to the reference storefront. */
 .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:clamp(30px,4.5vw,60px)}

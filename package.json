@@ -2,7 +2,7 @@
   "name": "openwear",
   "version": "1.0.0",
   "private": true,
-  "description": "Responsive recreation of the Anywear business landing page",
+  "description": "Openwear real-time virtual try-on for online clothing stores",
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs"
