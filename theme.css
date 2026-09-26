@@ -80,7 +80,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .hero h1 {
   max-width: 650px;
   margin: 0;
-  font-size: 61px;
+  font-size: 63px;
   line-height: 1.12;
   letter-spacing: -.02em;
   font-weight: 400;
@@ -92,7 +92,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 }
 .lede {
   max-width: 430px;
-  margin: 25px 0 63px;
+  margin: 25px 0 79px;
   color: #99999b;
   font-size: 19px;
   line-height: 1.5;
@@ -175,7 +175,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
     justify-content: center;
     padding-bottom: 30px;
   }
-  .hero-main { display: flex; flex-direction: column; gap: 56px; }
+  .hero-main { display: flex; flex-direction: column; gap: 72px; }
   .lede { margin: 18px 0 0; }
 }
 
@@ -499,7 +499,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .brand-wordmark { font-size: 26px; }
   .hero { padding: 74px 0 76px; }
   .hero-grid { gap: 45px; }
-  .hero h1 { font-size: clamp(44px, 6.3vw, 58px); }
+  .hero h1 { font-size: clamp(45px, 6.3vw, 59px); }
   .hero-media { order: 0; }
   .hero-video { aspect-ratio: auto; object-position: center; }
   .lede { font-size: 18px; }
@@ -520,8 +520,8 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .topbar .button-light { display: none; }
   .topbar .button-dark { height: 39px; padding: 0 17px; }
   .hero { padding: 65px 0 70px; }
-  .hero h1 { font-size: clamp(40px, 10vw, 48px); letter-spacing: -.02em; }
-  .lede { margin: 23px auto 59px; font-size: 17px; }
+  .hero h1 { font-size: clamp(41px, 10vw, 49px); letter-spacing: -.02em; }
+  .lede { margin: 23px auto 75px; font-size: 17px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
   .gradient-frame { padding: 8px; border-radius: 21px; }
