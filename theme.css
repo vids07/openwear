@@ -77,27 +77,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   align-items: center;
 }
 .hero-copy { width: 100%; text-align: left; }
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 40px;
-  margin-bottom: 39px;
-  padding: 0 16px;
-  border-radius: 99px;
-  background: #f2f2f2;
-  color: var(--ink);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -.01em;
-}
-.hero-kicker-icon {
-  width: 17px;
-  height: 17px;
-  flex: none;
-  fill: currentColor;
-}
 .hero h1 {
   max-width: 650px;
   margin: 0;
@@ -193,10 +172,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .hero-copy {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding-bottom: 30px;
   }
-  .hero-kicker { align-self: flex-start; margin-bottom: 0; }
+  .hero-main { display: flex; flex-direction: column; gap: 32px; }
   .lede { margin: 18px 0 0; }
 }
 
@@ -496,7 +475,6 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
 @media (max-width: 1150px) {
   .hero-grid { grid-template-columns: 1fr; gap: 50px; }
   .hero-copy { max-width: 760px; margin-inline: auto; text-align: center; }
-  .hero-kicker { align-self: center; }
   .hero h1 { max-width: 760px; margin-inline: auto; }
   .lede { max-width: 650px; margin-inline: auto; }
   .hero-actions { justify-content: center; margin-inline: auto; }
@@ -543,7 +521,6 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .topbar .button-dark { height: 39px; padding: 0 17px; }
   .hero { padding: 65px 0 70px; }
   .hero h1 { font-size: clamp(40px, 10vw, 48px); letter-spacing: -.02em; }
-  .hero-kicker { margin-bottom: 29px; font-size: 14px; }
   .lede { margin: 23px auto 35px; font-size: 17px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
