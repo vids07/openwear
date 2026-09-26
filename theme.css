@@ -91,8 +91,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   font-weight: 400;
 }
 .lede {
-  max-width: 470px;
-  margin: 25px 0 51px;
+  max-width: 430px;
+  margin: 25px 0 63px;
   color: #99999b;
   font-size: 19px;
   line-height: 1.5;
@@ -175,7 +175,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
     justify-content: center;
     padding-bottom: 30px;
   }
-  .hero-main { display: flex; flex-direction: column; gap: 44px; }
+  .hero-main { display: flex; flex-direction: column; gap: 56px; }
   .lede { margin: 18px 0 0; }
 }
 
@@ -521,7 +521,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .topbar .button-dark { height: 39px; padding: 0 17px; }
   .hero { padding: 65px 0 70px; }
   .hero h1 { font-size: clamp(40px, 10vw, 48px); letter-spacing: -.02em; }
-  .lede { margin: 23px auto 47px; font-size: 17px; }
+  .lede { margin: 23px auto 59px; font-size: 17px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
   .gradient-frame { padding: 8px; border-radius: 21px; }
