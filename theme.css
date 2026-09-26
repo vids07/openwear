@@ -168,6 +168,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 }
 
 @media (min-width: 1151px) {
+  /* Hero fills the first screen below the 78px topbar; the next section starts at the fold. */
+  .hero { min-height: calc(100svh - 78px); display: flex; align-items: center; }
   .hero-grid { align-items: stretch; }
   .hero-copy {
     display: flex;
@@ -551,4 +553,29 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
 @media (prefers-reduced-motion: reduce) {
   .button, .stack-button, .platform, .voice { transition: none; }
   .button:hover, .stack-button:hover, .platform:hover, .voice:hover { transform: none; }
+}
+
+/* Match the demo heading and subtitle to the hero typography. */
+.demo h2 {
+  max-width: 650px;
+  font-size: 63px;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  font-weight: 400;
+}
+.demo .section-intro {
+  color: #99999b;
+  font-size: 19px;
+  line-height: 1.5;
+  letter-spacing: -.02em;
+}
+
+@media (max-width: 760px) {
+  .demo h2 { font-size: clamp(45px, 6.3vw, 59px); }
+  .demo .section-intro { font-size: 18px; }
+}
+
+@media (max-width: 560px) {
+  .demo h2 { font-size: clamp(41px, 10vw, 49px); }
+  .demo .section-intro { font-size: 17px; }
 }
