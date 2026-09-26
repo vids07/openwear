@@ -271,9 +271,14 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
-.numbers .eyebrow {
+.numbers-title {
   grid-column: 1 / -1;
-  margin-bottom: 6px;
+  max-width: 900px;
+  margin: 0 0 14px;
+  font-size: 63px;
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  font-weight: 400;
 }
 .numbers .metric {
   --metric-tint: #dfe8fa;
@@ -579,7 +584,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .demo, .why, .numbers, .activate, .platforms, .qa, .voices { padding: 80px 0; }
   .one-column h2, .why h2, .voices-title { font-size: clamp(40px, 6.8vw, 56px); }
   .numbers .page-grid { grid-template-columns: 1fr; gap: 12px; }
-  .numbers .eyebrow { grid-column: auto; }
+  .numbers-title { font-size: clamp(45px, 6.3vw, 59px); }
   .numbers .metric { min-height: 0; padding: 26px; }
   .option-grid { grid-template-columns: 1fr; }
   .option-card { min-height: 395px; }
@@ -600,6 +605,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .hero-media figcaption, .why-media figcaption { font-size: 11px; }
   .demo, .why, .numbers, .activate, .platforms, .qa, .voices { padding: 69px 0; }
   .one-column h2, .why h2, .voices-title { font-size: clamp(39px, 10vw, 50px); }
+  .numbers-title { font-size: clamp(41px, 10vw, 49px); }
   .section-intro, .voices-intro { font-size: 16px; }
   .garment-grid { gap: 10px; margin-top: 30px; }
   .garment { border-radius: 13px; }
