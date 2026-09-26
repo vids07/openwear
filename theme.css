@@ -80,23 +80,23 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .hero-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  min-height: 38px;
+  gap: 8px;
+  min-height: 40px;
   margin-bottom: 39px;
-  padding: 0 17px;
+  padding: 0 16px;
   border-radius: 99px;
   background: #f2f2f2;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: -.015em;
+  line-height: 1.2;
+  letter-spacing: -.01em;
 }
-.hero-kicker-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 0 0 3px #dcdcdc;
+.hero-kicker-icon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  fill: currentColor;
 }
 .hero h1 {
   max-width: 650px;
@@ -553,7 +553,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .topbar .button-dark { height: 39px; padding: 0 17px; }
   .hero { padding: 65px 0 70px; }
   .hero h1 { font-size: clamp(40px, 10vw, 48px); letter-spacing: -.02em; }
-  .hero-kicker { margin-bottom: 29px; font-size: 12px; }
+  .hero-kicker { margin-bottom: 29px; font-size: 14px; }
   .lede { margin: 23px auto 35px; font-size: 16px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 38px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
