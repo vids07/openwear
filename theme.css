@@ -391,15 +391,23 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .platform span { color: #737377; font-size: 13px; }
 
 .qa h2 { margin-bottom: 44px; }
-.accordion { border-top: 1px solid var(--line); }
-.accordion details { border-bottom: 1px solid var(--line); }
+.accordion { border-top: 0; }
+.accordion details { border-bottom: 0; }
+/* Rows bleed 18px left so the question text stays aligned with the heading. */
 summary {
-  padding: 26px 40px 26px 0;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -.02em;
+  margin: 0 -18px;
+  padding: 26px 58px 26px 18px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -.01em;
+  color: #1c1c1e;
+  transition: background .2s ease, color .2s ease;
 }
-summary::after { right: 4px; color: var(--ink); }
+summary::after { right: 22px; color: var(--ink); transition: transform .25s ease; }
+summary:hover { background: #f4f4f3; }
+summary:hover::after { transform: rotate(90deg); }
+details[open] summary:hover::after { transform: none; }
 details p {
   max-width: 820px;
   color: var(--copy);
@@ -561,7 +569,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
 }
 
 /* Match the demo and problem headings and subtitles to the hero typography. */
-.demo h2, .why h2 {
+.demo h2, .why h2, .qa h2 {
   max-width: 650px;
   font-size: 63px;
   line-height: 1.12;
@@ -586,14 +594,14 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
 }
 
 @media (max-width: 760px) {
-  .demo h2 { font-size: clamp(45px, 6.3vw, 59px); }
+  .demo h2, .qa h2 { font-size: clamp(45px, 6.3vw, 59px); }
   .why h2 { font-size: clamp(44px, 6.2vw, 58px); }
   .demo .section-intro { font-size: 18px; }
   .why .section-intro { font-size: 16px; }
 }
 
 @media (max-width: 560px) {
-  .demo h2 { font-size: clamp(41px, 10vw, 49px); }
+  .demo h2, .qa h2 { font-size: clamp(41px, 10vw, 49px); }
   .why h2 { font-size: clamp(40px, 9.8vw, 48px); }
   .demo .section-intro { font-size: 17px; }
   .why .section-intro { font-size: 15px; }
@@ -604,51 +612,58 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   padding: 80px 0 120px;
 }
 .store-types h2 {
-  margin: 0 24px 72px;
+  margin: 0 24px 64px;
   text-align: center;
   font-size: clamp(37px, 3.7vw, 49px);
   line-height: 1.12;
-  letter-spacing: -.04em;
+  letter-spacing: -.02em;
   font-weight: 400;
 }
+/* Band sits inside the page, not edge to edge; ends fade out. */
 .store-marquees {
   display: grid;
-  gap: 28px;
-  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  gap: 36px;
+  width: min(1440px, calc(100% - 48px));
+  margin-inline: auto;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
 }
-.store-marquee { overflow: hidden; }
+.store-marquee { overflow: hidden; padding: 8px 0; }
 .store-track {
   display: flex;
   width: max-content;
-  animation: store-scroll 20s linear infinite;
+  animation: store-scroll 16s linear infinite;
 }
 .store-marquee-reverse .store-track { animation-direction: reverse; }
 .store-group {
   display: flex;
   align-items: center;
   flex: none;
-  gap: 34px;
-  padding-right: 34px;
+  gap: 40px;
+  padding-right: 40px;
 }
 .store-type {
   display: flex;
   flex: none;
   align-items: center;
-  gap: 16px;
-  color: var(--ink);
+  gap: 18px;
+  color: #1a1a1a;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: -.01em;
   white-space: nowrap;
 }
 .store-type img {
   display: block;
-  width: 62px;
-  height: 62px;
-  border-radius: 10px;
+  width: 64px;
+  height: 64px;
+  border-radius: 9px;
   object-fit: cover;
-  transform: rotate(-7deg);
+  box-shadow: 0 6px 16px rgba(20, 20, 25, .16);
+  transform: rotate(-8deg);
 }
-.store-type:nth-child(even) img { transform: rotate(7deg); }
+.store-type:nth-child(even) img { transform: rotate(6deg); }
+.store-type:nth-child(3n) img { transform: rotate(-4deg); }
 @keyframes store-scroll {
   to { transform: translateX(-50%); }
 }
