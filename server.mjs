@@ -1,6 +1,6 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize } from 'node:path';
+import { extname, join, normalize, sep } from 'node:path';
 import { randomUUID, randomBytes, createHmac, timingSafeEqual } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 
@@ -24,7 +24,9 @@ if (!process.env.SESSION_SECRET) {
   console.warn('[openwear] SESSION_SECRET not set — using an ephemeral secret; sessions reset on restart.');
 }
 
-const root = process.cwd();
+// The app dir holds server-only files (.env, openwear.db); only public/ is served.
+const root = import.meta.dirname;
+const publicDir = join(root, 'public');
 
 // ── Storage (built-in SQLite, no packages) ──────────────────────────
 const db = new DatabaseSync(join(root, 'openwear.db'));
@@ -164,6 +166,20 @@ const types = {
 };
 
 createServer(async (req, res) => {
+  try {
+    await handle(req, res);
+  } catch (error) {
+    console.error('[openwear] request failed:', error);
+    if (!res.headersSent) res.writeHead(error instanceof URIError ? 400 : 500);
+    res.end();
+  }
+}).listen(PORT, HOST, () => {
+  console.log(`Openwear running at http://${HOST}:${PORT}`);
+  console.log(`  identity: ${GOOGLE_ENABLED ? 'Google sign-in' : 'dev fallback (name+email)'}` +
+    `${DEV_LOGIN_ENABLED && GOOGLE_ENABLED ? ' + dev fallback' : ''} · try-on: ${DECART_API_KEY ? 'live' : 'stub'}`);
+});
+
+async function handle(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || `${HOST}:${PORT}`}`);
   const { pathname } = url;
   const method = req.method || 'GET';
@@ -280,9 +296,10 @@ createServer(async (req, res) => {
   }
 
   // ── Static files (with byte-range for video) ──
-  const rel = normalize(decodeURIComponent(pathname) === '/' ? 'index.html' : decodeURIComponent(pathname).replace(/^\/+/, ''));
-  const target = join(root, rel);
-  if (!target.startsWith(root) || !existsSync(target) || statSync(target).isDirectory()) {
+  const decoded = decodeURIComponent(pathname);
+  const rel = normalize(decoded === '/' ? 'index.html' : decoded.replace(/^\/+/, ''));
+  const target = join(publicDir, rel);
+  if (!target.startsWith(publicDir + sep) || !existsSync(target) || statSync(target).isDirectory()) {
     if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
     res.writeHead(404).end('Not found');
     return;
@@ -305,8 +322,4 @@ createServer(async (req, res) => {
   }
   res.setHeader('Content-Length', size);
   createReadStream(target).pipe(res);
-}).listen(PORT, HOST, () => {
-  console.log(`Openwear running at http://${HOST}:${PORT}`);
-  console.log(`  identity: ${GOOGLE_ENABLED ? 'Google sign-in' : 'dev fallback (name+email)'}` +
-    `${DEV_LOGIN_ENABLED && GOOGLE_ENABLED ? ' + dev fallback' : ''} · try-on: ${DECART_API_KEY ? 'live' : 'stub'}`);
-});
+}
