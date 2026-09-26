@@ -30,7 +30,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .page-grid, .nav-wrap { width: min(var(--max), calc(100% - 80px)); }
 .hero .page-grid, .nav-wrap { width: min(1340px, calc(100% - 80px)); }
 .section-white { background: var(--paper); }
-.section-pink { background: var(--blush); }
+.section-pink { background: var(--paper); }
 
 .topbar {
   height: 78px;
@@ -179,6 +179,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   }
   .hero-main { display: flex; flex-direction: column; gap: 72px; }
   .lede { margin: 18px 0 0; }
+  /* How it works matches the hero: one full screen below the topbar. */
+  .demo { min-height: calc(100svh - 78px); display: flex; align-items: center; }
 }
 
 .demo, .why, .numbers, .activate, .platforms, .qa, .voices {
@@ -253,13 +255,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 }
 .why h2 { max-width: 600px; }
 .why .section-intro { max-width: 570px; }
+/* Same bare frame as the hero: just the video with a soft shadow. */
 .why-media .gradient-frame {
-  padding: 22px;
-  background: linear-gradient(135deg, #eaf4f6, #f3edf9);
+  padding: 0;
+  background: transparent;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 52px rgba(27, 25, 31, .14);
 }
-.why-media .gradient-frame img { border-radius: 15px; }
+.why-media .gradient-frame video { display: block; width: 100%; height: auto; border-radius: 0; }
 
-.numbers { background: #f6f4fa; }
+.numbers { background: var(--paper); }
 .numbers .page-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -366,7 +372,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .plain-points { margin: 22px 0 26px; }
 .plain-points li::before { background: var(--ink); }
 
-.platforms { background: #f7f7f6; }
+.platforms { background: var(--paper); }
 .platform-grid {
   gap: 12px;
   margin-top: 43px;
@@ -400,7 +406,7 @@ details p {
   font-size: 16px;
 }
 
-.voices { background: #f6f4fa; }
+.voices { background: var(--paper); }
 .voices-title {
   margin: 18px 0 14px;
   font-size: clamp(45px, 5.4vw, 74px);
@@ -535,7 +541,6 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .garment-grid { gap: 10px; margin-top: 30px; }
   .garment { border-radius: 13px; }
   .try-badge { left: 8px; top: 8px; padding: 6px 9px; font-size: 10px; }
-  .why-media .gradient-frame { padding: 12px; }
   .metric .value { font-size: 55px; }
   .option-card { min-height: 380px; padding: 26px; }
   .option-card h3 { margin-top: 30px; }
@@ -555,27 +560,109 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .button:hover, .stack-button:hover, .platform:hover, .voice:hover { transform: none; }
 }
 
-/* Match the demo heading and subtitle to the hero typography. */
-.demo h2 {
+/* Match the demo and problem headings and subtitles to the hero typography. */
+.demo h2, .why h2 {
   max-width: 650px;
   font-size: 63px;
   line-height: 1.12;
   letter-spacing: -.02em;
   font-weight: 400;
 }
-.demo .section-intro {
+.demo .section-intro, .why .section-intro {
   color: #99999b;
   font-size: 19px;
   line-height: 1.5;
   letter-spacing: -.02em;
 }
+.why h2 { font-size: 62px; }
+.why .section-intro { font-size: 17px; }
+.demo .wide-intro {
+  max-width: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 940px) {
+  .demo .wide-intro { white-space: normal; }
+}
 
 @media (max-width: 760px) {
   .demo h2 { font-size: clamp(45px, 6.3vw, 59px); }
+  .why h2 { font-size: clamp(44px, 6.2vw, 58px); }
   .demo .section-intro { font-size: 18px; }
+  .why .section-intro { font-size: 16px; }
 }
 
 @media (max-width: 560px) {
   .demo h2 { font-size: clamp(41px, 10vw, 49px); }
+  .why h2 { font-size: clamp(40px, 9.8vw, 48px); }
   .demo .section-intro { font-size: 17px; }
+  .why .section-intro { font-size: 15px; }
+}
+
+.store-types {
+  overflow: hidden;
+  padding: 80px 0 120px;
+}
+.store-types h2 {
+  margin: 0 24px 72px;
+  text-align: center;
+  font-size: clamp(37px, 3.7vw, 49px);
+  line-height: 1.12;
+  letter-spacing: -.04em;
+  font-weight: 400;
+}
+.store-marquees {
+  display: grid;
+  gap: 28px;
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+.store-marquee { overflow: hidden; }
+.store-track {
+  display: flex;
+  width: max-content;
+  animation: store-scroll 20s linear infinite;
+}
+.store-marquee-reverse .store-track { animation-direction: reverse; }
+.store-group {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 34px;
+  padding-right: 34px;
+}
+.store-type {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 16px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.store-type img {
+  display: block;
+  width: 62px;
+  height: 62px;
+  border-radius: 10px;
+  object-fit: cover;
+  transform: rotate(-7deg);
+}
+.store-type:nth-child(even) img { transform: rotate(7deg); }
+@keyframes store-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 760px) {
+  .store-types { padding: 66px 0 96px; }
+  .store-types h2 { margin-bottom: 52px; }
+  .store-marquees { gap: 22px; }
+  .store-group { gap: 26px; padding-right: 26px; }
+  .store-type { gap: 12px; font-size: 16px; }
+  .store-type img { width: 52px; height: 52px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .store-track { animation: none; }
+  .store-marquee { overflow-x: auto; }
 }
