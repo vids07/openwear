@@ -1,0 +1,5 @@
+# Local secrets and runtime data — never commit these.
+.env
+openwear.db
+openwear.db-*
+node_modules/
