@@ -188,6 +188,18 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   text-align: left;
 }
 
+@media (min-width: 1151px) {
+  .hero-grid { align-items: stretch; }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 30px;
+  }
+  .hero-kicker { align-self: flex-start; margin-bottom: 0; }
+  .lede { margin: 0; }
+}
+
 .demo, .why, .numbers, .activate, .platforms, .qa, .voices {
   padding: clamp(80px, 9vw, 124px) 0;
 }
