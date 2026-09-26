@@ -141,13 +141,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   color: var(--ink);
 }
 .hero-actions .stack-light:hover { background: #d8d8d8; }
-.hero-support {
-  max-width: 510px;
-  margin: 28px 0 0;
-  color: #77777b;
-  font-size: 14px;
-  line-height: 1.5;
-}
 .stack-button {
   min-width: 205px;
   height: 62px;
@@ -492,11 +485,9 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .hero-grid { grid-template-columns: 1fr; gap: 50px; }
   .hero-copy { max-width: 760px; margin-inline: auto; text-align: center; }
   .hero-kicker { align-self: center; }
-  .hero-copy .hero-support { order: 3; }
   .hero h1 { max-width: 760px; margin-inline: auto; }
   .lede { max-width: 650px; margin-inline: auto; }
   .hero-actions { justify-content: center; margin-inline: auto; }
-  .hero-support { margin-inline: auto; }
   .hero-media { width: min(100%, 800px); margin-inline: auto; order: 0; }
   .hero-media figcaption { text-align: center; }
 }
@@ -544,7 +535,6 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .lede { margin: 23px auto 35px; font-size: 16px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
-  .hero-support { margin-top: 28px; font-size: 13px; }
   .gradient-frame { padding: 8px; border-radius: 21px; }
   .gradient-frame img, .gradient-frame video { border-radius: 14px; }
   .hero-media figcaption, .why-media figcaption { font-size: 11px; }
