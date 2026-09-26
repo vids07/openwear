@@ -115,7 +115,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   max-width: 470px;
   margin: 25px 0 51px;
   color: #99999b;
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.5;
   letter-spacing: -.02em;
 }
@@ -197,7 +197,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
     padding-bottom: 30px;
   }
   .hero-kicker { align-self: flex-start; margin-bottom: 0; }
-  .lede { margin: 0; }
+  .lede { margin: 18px 0 0; }
 }
 
 .demo, .why, .numbers, .activate, .platforms, .qa, .voices {
@@ -524,7 +524,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .hero h1 { font-size: clamp(44px, 6.3vw, 58px); }
   .hero-media { order: 0; }
   .hero-video { aspect-ratio: auto; object-position: center; }
-  .lede { font-size: 17px; }
+  .lede { font-size: 18px; }
   .demo, .why, .numbers, .activate, .platforms, .qa, .voices { padding: 80px 0; }
   .one-column h2, .why h2, .voices-title { font-size: clamp(40px, 6.8vw, 56px); }
   .numbers .page-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -544,7 +544,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .hero { padding: 65px 0 70px; }
   .hero h1 { font-size: clamp(40px, 10vw, 48px); letter-spacing: -.02em; }
   .hero-kicker { margin-bottom: 29px; font-size: 14px; }
-  .lede { margin: 23px auto 35px; font-size: 16px; }
+  .lede { margin: 23px auto 35px; font-size: 17px; }
   .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-actions .stack-button { flex: none; width: 100%; }
   .gradient-frame { padding: 8px; border-radius: 21px; }
