@@ -120,22 +120,22 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   letter-spacing: -.02em;
 }
 .hero-actions {
-  width: min(100%, 515px);
+  width: min(100%, 380px);
   display: flex;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
 }
 .hero-actions .stack-button {
   flex: 1 1 0;
   min-width: 0;
   width: 0;
-  height: 48px;
-  padding: 0 18px;
+  height: 44px;
+  padding: 0 14px;
   border: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
 }
-.hero-actions .stack-button span { font-size: 16px; }
+.hero-actions .stack-button span { font-size: 15px; }
 .hero-actions .stack-light {
   background: #f2f2f2;
   color: var(--ink);
