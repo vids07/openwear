@@ -141,6 +141,7 @@ async function readJson(request) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (/\.(mp4|webm)$/i.test(url.pathname)) return serveVideo(request, env, url);
     if (!url.pathname.startsWith('/api/') && !url.pathname.startsWith('/auth/')) {
       return env.ASSETS.fetch(request);
     }
@@ -152,6 +153,32 @@ export default {
     }
   },
 };
+
+// The assets binding ignores Range headers, and iOS Safari won't play a video
+// that can't be fetched in byte ranges. Our clips are a few MB, so slice here.
+async function serveVideo(request, env, url) {
+  const asset = await env.ASSETS.fetch(new Request(url, { method: 'GET' }));
+  const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get('range') || '');
+  if (!asset.ok || !range) {
+    const res = new Response(request.method === 'HEAD' ? null : asset.body, asset);
+    if (asset.ok) res.headers.set('Accept-Ranges', 'bytes');
+    return res;
+  }
+  const body = await asset.arrayBuffer();
+  const size = body.byteLength;
+  const start = range[1] ? Number(range[1]) : Math.max(size - Number(range[2]), 0);
+  const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+  const headers = new Headers(asset.headers);
+  headers.set('Accept-Ranges', 'bytes');
+  if (start >= size || start > end) {
+    headers.set('Content-Range', `bytes */${size}`);
+    headers.delete('Content-Length');
+    return new Response(null, { status: 416, headers });
+  }
+  headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
+  headers.set('Content-Length', String(end - start + 1));
+  return new Response(request.method === 'HEAD' ? null : body.slice(start, end + 1), { status: 206, headers });
+}
 
 async function handle(request, env, url) {
   const cfg = config(env);
