@@ -25,6 +25,6 @@ npm run deploy
 
 After that, `npm run deploy` builds, applies any new migrations, and deploys.
 
-To serve on a custom domain, uncomment `routes` in `wrangler.jsonc`. For Google
-sign-in, add `https://<your-domain>/auth/google/callback` as an authorized
-redirect URI.
+Live at https://tryon.indiclabs.ai (custom domain set in `wrangler.jsonc`). For
+Google sign-in, add `https://tryon.indiclabs.ai/auth/google/callback` as an
+authorized redirect URI.

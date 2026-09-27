@@ -29,8 +29,7 @@
   // or in .dev.vars for local development.
   "vars": {
     "TRIAL_SECONDS": "60"
-  }
+  },
 
-  // To serve on your domain, uncomment once the old DNS record for it is removed:
-  // , "routes": [{ "pattern": "tryon.indiclabs.ai", "custom_domain": true }]
+  "routes": [{ "pattern": "tryon.indiclabs.ai", "custom_domain": true }]
 }
