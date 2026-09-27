@@ -23,7 +23,7 @@ const tryonTimer = $('#tryon-timer');
 const signupNote = $('#signup-note');
 
 const CONTACT_URL = 'https://cal.com/indiclabs-m02a0z/30min';
-const SESSION_CACHE_KEY = 'openwear.session';
+const SESSION_CACHE_KEY = 'lookon.session';
 const RECORD_SECONDS = 6;
 
 // ── Session state (server is the source of truth; localStorage is a hint) ──

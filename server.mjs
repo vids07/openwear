@@ -28,7 +28,7 @@ const TRYON_MAX_BYTES = Number(process.env.OPENWEAR_TRYON_MAX_BYTES || 30 * 1024
 const GARMENT_HOSTS = new Set(['anywear.decart.ai']);
 const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
 if (!process.env.SESSION_SECRET) {
-  console.warn('[openwear] SESSION_SECRET not set — using an ephemeral secret; sessions reset on restart.');
+  console.warn('[LookOn] SESSION_SECRET not set — using an ephemeral secret; sessions reset on restart.');
 }
 
 // The app dir holds server-only files (.env, openwear.db); only public/ is served.
@@ -233,12 +233,12 @@ createServer(async (req, res) => {
   try {
     await handle(req, res);
   } catch (error) {
-    console.error('[openwear] request failed:', error);
+    console.error('[LookOn] request failed:', error);
     if (!res.headersSent) res.writeHead(error instanceof URIError ? 400 : 500);
     res.end();
   }
 }).listen(PORT, HOST, () => {
-  console.log(`Openwear running at http://${HOST}:${PORT}`);
+  console.log(`LookOn running at http://${HOST}:${PORT}`);
   console.log(`  identity: ${GOOGLE_ENABLED ? 'Google sign-in' : 'dev fallback (name+email)'}` +
     `${DEV_LOGIN_ENABLED && GOOGLE_ENABLED ? ' + dev fallback' : ''} · try-on: ${DECART_API_KEY ? 'live' : 'stub'}`);
 });
