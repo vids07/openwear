@@ -21,9 +21,13 @@ body {
 
 button, input, a { font-family: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
-a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible {
+input:focus-visible,
+html.keyboard-navigation :is(a, button, summary):focus-visible {
   outline: 2px solid #5c63ad;
   outline-offset: 4px;
+}
+html:not(.keyboard-navigation) :is(a, button, summary):focus-visible {
+  outline: none;
 }
 ::selection { background: #e5d7ff; color: var(--ink); }
 
@@ -647,9 +651,10 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .topbar .button-dark { height: 39px; padding: 0 17px; }
   .hero { padding: 65px 0 70px; }
   .hero h1 { font-size: clamp(41px, 10vw, 49px); letter-spacing: -.02em; }
-  .lede { margin: 23px auto 75px; font-size: 17px; }
-  .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
-  .hero-actions .stack-button { flex: none; width: 100%; }
+  .lede { margin: 23px auto 36px; font-size: 17px; }
+  /* Keep the two CTAs side by side as on desktop; stacked full-width pills read too heavy. */
+  .hero-actions { width: min(100%, 340px); gap: 10px; }
+  .hero-actions .stack-button { height: 48px; padding: 0 12px; }
   .gradient-frame { padding: 8px; border-radius: 21px; }
   .gradient-frame img, .gradient-frame video { border-radius: 14px; }
   .hero-media figcaption, .why-media figcaption { font-size: 11px; }
@@ -1011,4 +1016,17 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
 @media (prefers-reduced-motion: reduce) {
   .step-cta { transition: none; }
   .step-cta:hover { transform: none; }
+}
+
+/* Scroll reveal: script.js adds .reveal-on to <html> (skipped for reduced motion),
+   then fades each block up as it enters the viewport. */
+.reveal-on .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .8s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-on .reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }

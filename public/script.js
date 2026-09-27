@@ -1,6 +1,13 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Tab') document.documentElement.classList.add('keyboard-navigation');
+});
+document.addEventListener('pointerdown', () => {
+  document.documentElement.classList.remove('keyboard-navigation');
+});
+
 const tryonSheet = $('#tryon-sheet');
 const signupSheet = $('#signup-sheet');
 const signupForm = $('#signup-form');
@@ -34,6 +41,8 @@ let pendingGarment = null;
 // The in-flight trial.
 let activeSessionId = null;
 let activeGarment = null;
+let liveActive = false;       // true once transformed frames are showing
+let expectDisconnect = false; // true when WE end the session, so a drop is expected
 
 function readCachedSession() {
   try { return JSON.parse(localStorage.getItem(SESSION_CACHE_KEY) || 'null'); }
@@ -132,6 +141,7 @@ const failWith = (message) => {
 };
 
 const failLive = (message) => {
+  liveActive = false;
   clearCountdown();
   stopRealtime();
   stopStream();
@@ -146,6 +156,27 @@ const failLive = (message) => {
   cameraButton.disabled = false;
   cameraButton.textContent = 'Close';
   cameraButton.dataset.role = 'close';
+};
+
+// The live stream dropped before the timer ran out (credits exhausted, quota,
+// or a network drop). Show a clean end state instead of a frozen frame.
+const showEnded = () => {
+  if (!liveActive) return; // ignore late/duplicate disconnect events
+  liveActive = false;
+  clearCountdown();
+  stopStream();
+  resetOutputVideo();
+  tryonIcon.classList.remove('spinning');
+  stage.hidden = true;
+  tryonIcon.hidden = false;
+  tryonTitle.textContent = 'Your live try-on ended';
+  tryonCopy.textContent = 'The live session stopped. That’s your one free try — want it live for every shopper on your store?';
+  tryonNote.textContent = '';
+  cameraButton.hidden = false;
+  cameraButton.disabled = false;
+  cameraButton.textContent = 'Close';
+  cameraButton.dataset.role = 'close';
+  endTrial(activeSessionId);
 };
 
 function stopStream() {
@@ -264,6 +295,7 @@ async function startRealtime(sessionId, garmentSrc, deadline) {
   // 2) Open the WebRTC session and swap the preview for the transformed stream.
   const image = await fetchGarment(garmentSrc);
   let connected = false;
+  expectDisconnect = false;
   try {
     await window.LookOnRealtime.connect({
       token: tok.token,
@@ -278,8 +310,13 @@ async function startRealtime(sessionId, garmentSrc, deadline) {
         video.play?.().catch(() => {});
         liveOn(deadline);
       },
+      onConnectionChange: (state) => {
+        // A drop we didn't cause, after we were live, means the session ended early.
+        if (state === 'disconnected' && connected && !expectDisconnect) showEnded();
+      },
       onError: () => {
         if (!connected) { failLive('The live try-on couldn’t connect. Please try again on your store.'); endTrial(sessionId); }
+        else showEnded();
       },
     });
   } catch {
@@ -295,6 +332,7 @@ async function startRealtime(sessionId, garmentSrc, deadline) {
 }
 
 function liveOn(deadline) {
+  liveActive = true;
   clearCountdown();
   tryonTitle.textContent = 'You’re wearing it';
   tryonCopy.textContent = 'Move around — the garment tracks you live. This is exactly what your shoppers get.';
@@ -328,6 +366,8 @@ function stopRealtime() {
 }
 
 function endTrial(sessionId) {
+  expectDisconnect = true; // we're ending on purpose; ignore the resulting drop
+  liveActive = false;
   clearCountdown();
   stopRealtime();
   stopStream();
@@ -458,3 +498,43 @@ $$('dialog').forEach((dialog) => {
 
 // Prime session state on load (updates the signup sheet + used/ready state).
 refreshSession();
+
+// ── Scroll reveal ────────────────────────────────────────────────────
+// Every section below the hero fades up block by block as it scrolls in.
+// Blocks entering together are staggered; once shown, the reveal classes
+// come off so hover transforms on cards keep working.
+(function setupScrollReveal() {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const blocks = [
+    '.eyebrow', 'h2', '.section-intro', '.steps-intro', '.caption-wide',
+    '.garment', '.store-marquees', '.why-media', '.metric', '.step-card',
+    '.platform', '.accordion details',
+  ].map((sel) => `main > section:not(.hero) ${sel}`).join(',');
+  const targets = $$(blocks);
+  if (!targets.length) return;
+
+  document.documentElement.classList.add('reveal-on');
+  targets.forEach((el) => el.classList.add('reveal'));
+
+  const finish = (el) => {
+    el.classList.remove('reveal', 'is-visible');
+    el.style.removeProperty('--reveal-delay');
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    let order = 0;
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      observer.unobserve(el);
+      const delay = Math.min(order++ * 90, 540);
+      el.style.setProperty('--reveal-delay', `${delay}ms`);
+      el.classList.add('is-visible');
+      window.setTimeout(() => finish(el), delay + 900);
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+
+  targets.forEach((el) => observer.observe(el));
+})();
