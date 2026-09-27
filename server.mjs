@@ -299,6 +299,42 @@ async function handle(req, res) {
     return sendJson(res, 200, { ok: true }, setCookies);
   }
 
+  // ── Realtime try-on: mint an ephemeral client token for the browser ──
+  // The permanent key stays here; the browser gets a short-lived token that
+  // the Decart SDK uses to open the WebRTC session directly.
+  if (pathname === '/api/tryon/token' && method === 'POST') {
+    const session = readSession(req);
+    if (!session) return sendJson(res, 401, { error: 'sign_in_required' }, setCookies);
+    const sessionId = url.searchParams.get('sessionId');
+    if (!activeTrial(sessionId, session.k)) return sendJson(res, 403, { error: 'trial_inactive' }, setCookies);
+    if (!DECART_API_KEY) return sendJson(res, 200, { mode: 'stub' }, setCookies);
+    // One live session per trial: spend it now so a second token can't be minted.
+    completeTrial(Math.floor(Date.now() / 1000), sessionId, session.k);
+    try {
+      const r = await fetch(`${DECART_API_BASE}/client/tokens`, {
+        method: 'POST',
+        headers: { 'x-api-key': DECART_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          expiresIn: 300, // token TTL; the live session length is capped below
+          allowedModels: [DECART_MODEL, 'lucy-vton-latest'],
+          allowedOrigins: [url.origin],
+          constraints: { realtime: { maxSessionDuration: TRIAL_SECONDS + 30 } },
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data.apiKey) return sendJson(res, 502, { error: 'token_failed' }, setCookies);
+      return sendJson(res, 200, {
+        mode: 'live',
+        token: data.apiKey,
+        expiresAt: data.expiresAt ?? null,
+        model: DECART_MODEL,
+        trialSeconds: TRIAL_SECONDS,
+      }, setCookies);
+    } catch {
+      return sendJson(res, 502, { error: 'decart_unreachable' }, setCookies);
+    }
+  }
+
   // ── Try-on: proxy to Decart (the API key never leaves this server) ──
   if (pathname === '/api/tryon/submit' && method === 'POST') {
     const session = readSession(req);

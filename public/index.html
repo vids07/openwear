@@ -17,7 +17,6 @@
     <div class="nav-wrap">
       <a class="brand brand-wordmark" href="#top" aria-label="LookOn home">LookOn</a>
       <nav>
-        <button class="button button-light open-tryon">Try it on</button>
         <a class="button button-dark" href="https://cal.com/indiclabs-m02a0z/30min" target="_blank" rel="noopener">Contact us</a>
       </nav>
     </div>
@@ -51,6 +50,7 @@
         <h2>P<span class="italic-letter-span">i</span>ck one and see<br />it on yo<span class="italic-letter-span">u</span>rself.</h2>
         <p class="section-intro wide-intro">Nothing to download, nothing to upload — about ten seconds from product page to wearing it.</p>
         <div class="garment-grid">
+          <p class="demo-prompt" id="demo-prompt" role="status" hidden><span aria-hidden="true">↓</span> Choose a garment below to see it on yourself.</p>
           <button class="garment open-tryon" aria-label="Try on black hoodie"><span class="try-badge"><i class="try-spark" aria-hidden="true">✦</i><b>Try-On</b></span><img src="https://anywear.decart.ai/assets/one-pager/garment2.png" alt="Garment to try on" /></button>
           <button class="garment open-tryon" aria-label="Try on green sweater"><span class="try-badge"><i class="try-spark" aria-hidden="true">✦</i><b>Try-On</b></span><img src="assets/garment-green-flowers.jpg" alt="Garment to try on" /></button>
           <button class="garment open-tryon" aria-label="Try on white sweater"><span class="try-badge"><i class="try-spark" aria-hidden="true">✦</i><b>Try-On</b></span><img src="https://anywear.decart.ai/assets/one-pager/garment4.png" alt="Garment to try on" /></button>
@@ -254,6 +254,7 @@
     <small id="tryon-note">Your camera runs on your device only — nothing is uploaded, recorded, or sent anywhere.</small>
     <p class="tryon-next">Want this on your own product pages? <a class="text-link" href="https://cal.com/indiclabs-m02a0z/30min" target="_blank" rel="noopener">Book a 30-minute call</a></p>
   </div></dialog>
+  <script src="vendor/realtime-tryon.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

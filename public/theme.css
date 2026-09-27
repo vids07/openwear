@@ -212,10 +212,31 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   color: #77777b;
   font-size: 13px;
 }
+.demo-prompt {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  animation: demo-prompt-in .2s ease-out;
+}
+.demo-prompt span { margin-right: 7px; font-size: 18px; }
+.demo-prompt[hidden] { display: none; }
+@keyframes demo-prompt-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-prompt { animation: none; }
+}
 
 .garment-grid {
+  position: relative;
   gap: 17px;
-  margin-top: 42px;
+  margin-top: 64px;
 }
 .garment {
   border: 1px solid #ededed;
@@ -609,7 +630,7 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .one-column h2, .why h2, .voices-title { font-size: clamp(39px, 10vw, 50px); }
   .numbers-title { font-size: clamp(41px, 10vw, 49px); }
   .section-intro, .voices-intro { font-size: 16px; }
-  .garment-grid { gap: 10px; margin-top: 30px; }
+  .garment-grid { gap: 10px; margin-top: 64px; }
   .garment { border-radius: 13px; }
   .try-badge { left: 8px; top: 8px; padding: 6px 9px; font-size: 10px; }
   .option-card { min-height: 380px; padding: 26px; }
