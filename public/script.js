@@ -416,8 +416,37 @@ async function requestTryon(garmentSrc) {
 
 const showSignupError = (message) => { signupError.textContent = message; signupError.hidden = false; };
 
-// Google: full-page redirect to the OAuth flow.
-signupGoogle?.addEventListener('click', () => { window.location.href = '/auth/google'; });
+// Google: full-page redirect to the OAuth flow. The page reloads on return,
+// so remember which garment they picked and reopen it afterwards.
+const PENDING_GARMENT_KEY = 'tryon.pendingGarment';
+signupGoogle?.addEventListener('click', () => {
+  try { sessionStorage.setItem(PENDING_GARMENT_KEY, pendingGarment || ''); } catch { /* storage blocked */ }
+  window.location.href = '/auth/google';
+});
+
+async function resumeAfterGoogle() {
+  const params = new URLSearchParams(window.location.search);
+  const auth = params.get('auth');
+  if (!auth) return false;
+  params.delete('auth');
+  const query = params.toString();
+  history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
+
+  let garment = null;
+  try {
+    garment = sessionStorage.getItem(PENDING_GARMENT_KEY);
+    sessionStorage.removeItem(PENDING_GARMENT_KEY);
+  } catch { /* storage blocked */ }
+
+  await refreshSession();
+  if (auth === 'success' && session.signedIn) {
+    openTryon(garment || undefined);
+  } else if (auth === 'error') {
+    openSignup(garment || undefined);
+    showSignupError('Google sign-in didn’t go through. Please try again.');
+  }
+  return true;
+}
 
 // Dev fallback: name + email (unverified) when Google isn't configured.
 signupForm?.addEventListener('submit', async (event) => {
@@ -501,8 +530,9 @@ $$('dialog').forEach((dialog) => {
   });
 });
 
-// Prime session state on load (updates the signup sheet + used/ready state).
-refreshSession();
+// Prime session state on load (updates the signup sheet + used/ready state),
+// or pick the try-on back up if we're returning from Google sign-in.
+resumeAfterGoogle().then((resumed) => { if (!resumed) refreshSession(); });
 
 // ── Scroll reveal ────────────────────────────────────────────────────
 // Every section below the hero fades up block by block as it scrolls in.
