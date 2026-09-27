@@ -1,0 +1,26 @@
+# Local secrets for `npm run dev`. Copy to .dev.vars and fill in.
+# In production set each with: npx wrangler secret put <NAME>
+
+# Required. Signs the session and device cookies. Generate one with:
+#   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+SESSION_SECRET=
+
+# Google sign-in (the verified "one per person" identity). Optional.
+# OAuth client (Web application) at https://console.cloud.google.com/apis/credentials
+# with redirect URIs:
+#   http://localhost:8787/auth/google/callback
+#   https://tryon.indiclabs.ai/auth/google/callback
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Keep the name+email login available even when Google is configured.
+# (It's automatically on whenever Google is NOT configured.)
+# ALLOW_DEV_LOGIN=1
+
+# Your Decart platform key (https://platform.decart.ai) for the live try-on.
+# Leave empty for stub mode. Never sent to the browser.
+DECART_API_KEY=
+
+# Optional overrides.
+# DECART_MODEL=lucy-vton-3.5
+# DECART_API_BASE=https://api.decart.ai/v1

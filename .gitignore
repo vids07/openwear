@@ -1,5 +1,7 @@
 # Local secrets and runtime data — never commit these.
 .env
+.dev.vars
+.wrangler/
 openwear.db
 openwear.db-*
 node_modules/

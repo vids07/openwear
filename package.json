@@ -1,18 +1,18 @@
 {
-  "name": "lookon",
+  "name": "tryon",
   "version": "1.0.0",
   "private": true,
-  "description": "LookOn real-time virtual try-on for online clothing stores",
+  "description": "TryOn real-time virtual try-on for online clothing stores",
   "scripts": {
     "build": "esbuild src/realtime-tryon.js --bundle --minify --format=iife --global-name=LookOnRealtime --outfile=public/vendor/realtime-tryon.js --target=es2020",
-    "dev": "node server.mjs",
-    "start": "node server.mjs",
-    "prestart": "npm run build"
+    "dev": "npm run build && wrangler d1 migrations apply tryon --local && wrangler dev",
+    "deploy": "npm run build && wrangler d1 migrations apply tryon --remote && wrangler deploy"
   },
   "dependencies": {
     "@decartai/sdk": "^0.2.3"
   },
   "devDependencies": {
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "wrangler": "^4.142.0"
   }
 }
