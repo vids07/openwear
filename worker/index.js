@@ -154,14 +154,35 @@ export default {
   },
 };
 
+// Videos are for the page's own <video> tags only. Opening one in a tab (or
+// embedding it on another site) bounces to the home page. Requests that carry
+// no fetch metadata (older browsers, iOS media stack) are let through so
+// playback never breaks — this deters casual saving, it can't stop a determined
+// downloader.
+function videoRequestAllowed(request, url) {
+  const h = request.headers;
+  const dest = h.get('sec-fetch-dest');
+  const mode = h.get('sec-fetch-mode');
+  const site = h.get('sec-fetch-site');
+  if (mode === 'navigate' || ['document', 'iframe', 'frame', 'embed', 'object'].includes(dest)) return false;
+  if (site === 'cross-site' || site === 'same-site') return false;
+  const referer = h.get('referer');
+  if (referer) {
+    try { if (new URL(referer).origin !== url.origin) return false; } catch { return false; }
+  }
+  return true;
+}
+
 // The assets binding ignores Range headers, and iOS Safari won't play a video
 // that can't be fetched in byte ranges. Our clips are a few MB, so slice here.
 async function serveVideo(request, env, url) {
+  if (!videoRequestAllowed(request, url)) return redirect('/', []);
   const asset = await env.ASSETS.fetch(new Request(url, { method: 'GET' }));
   const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get('range') || '');
   if (!asset.ok || !range) {
     const res = new Response(request.method === 'HEAD' ? null : asset.body, asset);
     if (asset.ok) res.headers.set('Accept-Ranges', 'bytes');
+    res.headers.set('Vary', 'Sec-Fetch-Dest, Sec-Fetch-Site');
     return res;
   }
   const body = await asset.arrayBuffer();
@@ -170,6 +191,7 @@ async function serveVideo(request, env, url) {
   const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
   const headers = new Headers(asset.headers);
   headers.set('Accept-Ranges', 'bytes');
+  headers.set('Vary', 'Sec-Fetch-Dest, Sec-Fetch-Site');
   if (start >= size || start > end) {
     headers.set('Content-Range', `bytes */${size}`);
     headers.delete('Content-Length');

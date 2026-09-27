@@ -8,6 +8,13 @@ document.addEventListener('pointerdown', () => {
   document.documentElement.classList.remove('keyboard-navigation');
 });
 
+// No right-click "Save video as / Open video in new tab" and no dragging the
+// showcase clips out of the page.
+$$('video').forEach((el) => {
+  el.addEventListener('contextmenu', (event) => event.preventDefault());
+  el.addEventListener('dragstart', (event) => event.preventDefault());
+});
+
 const tryonSheet = $('#tryon-sheet');
 const signupSheet = $('#signup-sheet');
 const signupForm = $('#signup-form');
