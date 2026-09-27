@@ -1,5 +1,6 @@
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, statSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { Readable } from 'node:stream';
 import { extname, join, normalize, sep } from 'node:path';
 import { randomUUID, randomBytes, createHmac, timingSafeEqual } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
@@ -19,6 +20,12 @@ const GOOGLE_ENABLED = Boolean(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET);
 const DEV_LOGIN_ENABLED = process.env.OPENWEAR_ALLOW_DEV_LOGIN === '1' || !GOOGLE_ENABLED;
 // Decart platform key. Server-side only. Absent ⇒ try-on runs in stub mode.
 const DECART_API_KEY = process.env.DECART_API_KEY || '';
+const DECART_API_BASE = (process.env.DECART_API_BASE || 'https://api.decart.ai/v1').replace(/\/+$/, '');
+const DECART_MODEL = process.env.DECART_MODEL || 'lucy-vton-3.5';
+// Cap the clip a browser may upload (a few seconds of 720p is well under this).
+const TRYON_MAX_BYTES = Number(process.env.OPENWEAR_TRYON_MAX_BYTES || 30 * 1024 * 1024);
+// Only these off-site hosts may be used as a garment reference image (anti-SSRF).
+const GARMENT_HOSTS = new Set(['anywear.decart.ai']);
 const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
 if (!process.env.SESSION_SECRET) {
   console.warn('[openwear] SESSION_SECRET not set — using an ephemeral secret; sessions reset on restart.');
@@ -69,6 +76,63 @@ function completeTrial(endedAt, id, identityKey) {
 function trialState(identityKey, deviceToken) {
   const existing = findTrial(identityKey, deviceToken);
   return { eligible: !existing, reason: existing ? 'trial_used' : null };
+}
+
+/** The trial row iff it belongs to this identity, is still active, and unexpired. */
+function activeTrial(sessionId, identityKey) {
+  if (!sessionId || !identityKey) return null;
+  const row = db.prepare('SELECT id, status, expires_at FROM trials WHERE id = ? AND identity_key = ?').get(sessionId, identityKey);
+  if (!row || row.status !== 'active') return null;
+  if (Number(row.expires_at) * 1000 < Date.now()) return null;
+  return row;
+}
+
+// ── Decart try-on proxy helpers ─────────────────────────────────────
+// Which Decart job belongs to which account. In-memory is fine: a trial is
+// short-lived and one process serves it; a restart just ends any in-flight job.
+const jobOwners = new Map();
+
+async function readBody(req, limit) {
+  const chunks = [];
+  let total = 0;
+  for await (const chunk of req) {
+    total += chunk.length;
+    if (total > limit) throw new Error('too_large');
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
+/** Turn a garment reference (a local asset path or an allowlisted URL) into bytes. */
+async function resolveGarment(ref, origin) {
+  if (!ref) return null;
+  let localPath = null;
+  let remoteUrl = null;
+  if (/^https?:\/\//i.test(ref)) {
+    let u;
+    try { u = new URL(ref); } catch { return null; }
+    const selfHost = new URL(origin).host;
+    if (u.host === selfHost) localPath = u.pathname;            // our own /assets/…
+    else if (GARMENT_HOSTS.has(u.host)) remoteUrl = u.toString(); // allowlisted host
+    else return null;                                            // anything else: refuse
+  } else {
+    localPath = ref;
+  }
+  if (localPath) {
+    const rel = normalize(decodeURIComponent(localPath).replace(/^\/+/, ''));
+    const target = join(publicDir, rel);
+    if (!target.startsWith(publicDir + sep) || !existsSync(target) || statSync(target).isDirectory()) return null;
+    return { buffer: readFileSync(target), contentType: types[extname(target)] || 'application/octet-stream' };
+  }
+  try {
+    const r = await fetch(remoteUrl);
+    if (!r.ok) return null;
+    const buffer = Buffer.from(await r.arrayBuffer());
+    if (buffer.length > TRYON_MAX_BYTES) return null;
+    return { buffer, contentType: r.headers.get('content-type') || 'image/png' };
+  } catch {
+    return null;
+  }
 }
 
 // ── Cookies + signing (node:crypto) ─────────────────────────────────
@@ -200,6 +264,7 @@ async function handle(req, res) {
       trialSeconds: TRIAL_SECONDS,
       googleEnabled: GOOGLE_ENABLED,
       devLoginEnabled: DEV_LOGIN_ENABLED,
+      liveTryOn: Boolean(DECART_API_KEY),
     }, setCookies);
   }
 
@@ -232,6 +297,92 @@ async function handle(req, res) {
     const body = await readJson(req);
     if (body.sessionId) completeTrial(Math.floor(Date.now() / 1000), String(body.sessionId), session.k);
     return sendJson(res, 200, { ok: true }, setCookies);
+  }
+
+  // ── Try-on: proxy to Decart (the API key never leaves this server) ──
+  if (pathname === '/api/tryon/submit' && method === 'POST') {
+    const session = readSession(req);
+    if (!session) return sendJson(res, 401, { error: 'sign_in_required' }, setCookies);
+    // The recorded clip must belong to a trial that is this account's, live, and unexpired.
+    const sessionId = url.searchParams.get('sessionId');
+    if (!activeTrial(sessionId, session.k)) {
+      return sendJson(res, 403, { error: 'trial_inactive' }, setCookies);
+    }
+    // One submit per trial: spend it now so a second clip can't fire another job.
+    completeTrial(Math.floor(Date.now() / 1000), sessionId, session.k);
+    if (!DECART_API_KEY) return sendJson(res, 200, { mode: 'stub' }, setCookies);
+
+    let clip;
+    try {
+      clip = await readBody(req, TRYON_MAX_BYTES);
+    } catch {
+      return sendJson(res, 413, { error: 'clip_too_large' }, setCookies);
+    }
+    if (!clip.length) return sendJson(res, 400, { error: 'empty_clip' }, setCookies);
+
+    const garment = await resolveGarment(url.searchParams.get('garment'), url.origin);
+    if (!garment) return sendJson(res, 400, { error: 'garment_unavailable' }, setCookies);
+
+    const clipType = (req.headers['content-type'] || '').startsWith('video/') ? req.headers['content-type'] : 'video/webm';
+    const ext = clipType.includes('mp4') ? 'mp4' : 'webm';
+    const form = new FormData();
+    form.set('data', new Blob([clip], { type: clipType }), `input.${ext}`);
+    form.set('reference_image', new Blob([garment.buffer], { type: garment.contentType }), 'garment');
+
+    try {
+      const r = await fetch(`${DECART_API_BASE}/jobs/${DECART_MODEL}`, {
+        method: 'POST',
+        headers: { 'X-API-KEY': DECART_API_KEY },
+        body: form,
+      });
+      const data = await r.json().catch(() => ({}));
+      const jobId = data.job_id || data.id;
+      if (!r.ok || !jobId) return sendJson(res, 502, { error: 'decart_submit_failed' }, setCookies);
+      jobOwners.set(jobId, session.k);
+      return sendJson(res, 200, { mode: 'live', jobId }, setCookies);
+    } catch {
+      return sendJson(res, 502, { error: 'decart_unreachable' }, setCookies);
+    }
+  }
+
+  if (pathname === '/api/tryon/status' && method === 'GET') {
+    const session = readSession(req);
+    if (!session) return sendJson(res, 401, { error: 'sign_in_required' }, setCookies);
+    const id = url.searchParams.get('id');
+    if (!id || jobOwners.get(id) !== session.k) return sendJson(res, 404, { error: 'not_found' }, setCookies);
+    if (!DECART_API_KEY) return sendJson(res, 200, { status: 'completed' }, setCookies);
+    try {
+      const r = await fetch(`${DECART_API_BASE}/jobs/${encodeURIComponent(id)}`, { headers: { 'X-API-KEY': DECART_API_KEY } });
+      const data = await r.json().catch(() => ({}));
+      return sendJson(res, 200, { status: data.status || 'unknown' }, setCookies);
+    } catch {
+      return sendJson(res, 502, { error: 'decart_unreachable' }, setCookies);
+    }
+  }
+
+  if (pathname === '/api/tryon/result' && method === 'GET') {
+    const session = readSession(req);
+    const id = url.searchParams.get('id');
+    if (!session || !id || jobOwners.get(id) !== session.k || !DECART_API_KEY) {
+      if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
+      res.writeHead(404).end('Not found');
+      return;
+    }
+    try {
+      const r = await fetch(`${DECART_API_BASE}/jobs/${encodeURIComponent(id)}/content`, { headers: { 'X-API-KEY': DECART_API_KEY } });
+      if (!r.ok || !r.body) {
+        if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
+        res.writeHead(502).end();
+        return;
+      }
+      if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
+      res.writeHead(200, { 'Content-Type': r.headers.get('content-type') || 'video/mp4' });
+      Readable.fromWeb(r.body).pipe(res);
+    } catch {
+      if (!res.headersSent) res.writeHead(502);
+      res.end();
+    }
+    return;
   }
 
   // ── Auth: Google ──
