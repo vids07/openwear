@@ -306,7 +306,11 @@ async function handle(request, env, url) {
   // ── Auth: Google ──
   if (pathname === '/auth/google' && method === 'GET') {
     if (!cfg.googleEnabled) return redirect('/?auth=disabled', setCookies);
+    // CSRF guard: the callback must carry the same random state we set here.
+    const state = crypto.randomUUID();
+    setCookies.push(cookie('ow_oauth_state', await sign(cfg.sessionSecret, state), { maxAge: 600, secure, path: '/auth/google' }));
     const params = new URLSearchParams({
+      state,
       client_id: cfg.googleClientId,
       redirect_uri: `${url.origin}/auth/google/callback`,
       response_type: 'code',
@@ -319,7 +323,11 @@ async function handle(request, env, url) {
 
   if (pathname === '/auth/google/callback' && method === 'GET') {
     const code = url.searchParams.get('code');
-    if (!cfg.googleEnabled || !code) return redirect('/?auth=error', setCookies);
+    const expectedState = await unsign(cfg.sessionSecret, cookies.ow_oauth_state);
+    setCookies.push(cookie('ow_oauth_state', '', { maxAge: 0, secure, path: '/auth/google' }));
+    if (!cfg.googleEnabled || !code || !expectedState || url.searchParams.get('state') !== expectedState) {
+      return redirect('/?auth=error', setCookies);
+    }
     try {
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',

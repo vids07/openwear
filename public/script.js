@@ -203,8 +203,24 @@ async function beginTrial() {
 
   cameraButton.disabled = true;
   cameraButton.textContent = 'Starting…';
+  const garment = garmentShot?.src || null;
 
-  // 1) Consume the one free trial, server-side.
+  // 1) Open the camera first, so a blocked or missing camera doesn't cost
+  //    the one free try. (Shown as a mirrored preview while we connect.)
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } }, audio: false });
+    resetOutputVideo();
+    video.srcObject = stream;
+    await video.play();
+  } catch (error) {
+    if (error.name === 'NotAllowedError') failWith('Camera permission was blocked. Allow camera access for this site and try again — your free try is still unused.');
+    else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') failWith('No camera was found on this device.');
+    else if (error.name === 'NotReadableError') failWith('Another app is already using the camera. Close it and try again.');
+    else failWith('Something stopped the camera from starting.');
+    return;
+  }
+
+  // 2) Consume the one free trial, server-side.
   let start;
   try {
     const res = await fetch('/api/trial/start', { method: 'POST', credentials: 'same-origin' });
@@ -214,7 +230,7 @@ async function beginTrial() {
     return;
   }
 
-  if (start.status === 401) { tryonSheet.close(); openSignup(pendingGarment); return; }
+  if (start.status === 401) { stopStream(); tryonSheet.close(); openSignup(garment); return; }
   if (start.status === 403) { session.eligible = false; cacheSession(); showUsed(); return; }
   if (start.status !== 200) { failWith('Something went wrong starting your try-on. Please try again.'); return; }
 
@@ -222,22 +238,7 @@ async function beginTrial() {
   session.eligible = false;
   cacheSession();
   activeSessionId = start.body.sessionId;
-  activeGarment = garmentShot?.src || null;
-
-  // 2) Open the camera (shown as a mirrored preview while we connect).
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 } }, audio: false });
-    resetOutputVideo();
-    video.srcObject = stream;
-    await video.play();
-  } catch (error) {
-    if (error.name === 'NotAllowedError') failWith('Camera permission was blocked, and this was your one free try. Allow the camera and reach out to see it on your store.');
-    else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') failWith('No camera was found on this device.');
-    else if (error.name === 'NotReadableError') failWith('Another app is already using the camera. Close it and try again.');
-    else failWith('Something stopped the camera from starting.');
-    endTrial(activeSessionId);
-    return;
-  }
+  activeGarment = garment;
 
   stage.hidden = false;
   tryonIcon.hidden = true;
@@ -323,9 +324,10 @@ async function startRealtime(sessionId, garmentSrc, deadline) {
     return;
   }
 
-  // Safety net: if no frames arrive within 25s, surface an error.
+  // Safety net: if no frames arrive within 25s, surface an error (unless the
+  // shopper already closed this try-on).
   window.setTimeout(() => {
-    if (!connected) { failLive('The try-on engine didn’t respond in time. Please try again.'); endTrial(sessionId); }
+    if (!connected && activeSessionId === sessionId) { failLive('The try-on engine didn’t respond in time. Please try again.'); endTrial(sessionId); }
   }, 25000);
 }
 
@@ -468,10 +470,11 @@ signupForm?.addEventListener('submit', async (event) => {
     return showSignupError('Could not reach the server. Please try again.');
   }
 
+  // Grab the garment first: closing the sheet clears pendingGarment.
+  const garment = pendingGarment;
   signupSheet.close();
   await refreshSession();
-  openTryon(pendingGarment);
-  pendingGarment = null;
+  openTryon(garment);
 });
 
 signupSheet.addEventListener('close', () => { pendingGarment = null; });
