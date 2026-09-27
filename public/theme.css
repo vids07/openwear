@@ -1008,8 +1008,31 @@ dialog::backdrop { background: rgba(20, 20, 25, .48); }
   .steps-intro { font-size: 17px; margin-bottom: 40px; }
   .step-card { min-height: 540px; padding: 30px 26px 0; }
   .step-card h3 { font-size: 26px; }
-  .step-phone { top: 10px; right: 50%; width: 220px; height: 440px; transform: translateX(50%); }
-  .step-sheet { left: 50%; bottom: 24px; width: min(300px, 100%); transform: translateX(-50%); }
+  .step-try { min-height: 0; padding-bottom: 24px; }
+  .step-try .step-visual {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    min-height: 0;
+    margin-top: 20px;
+  }
+  .step-try .step-phone {
+    position: relative;
+    inset: auto;
+    width: min(250px, 100%);
+    height: auto;
+    aspect-ratio: 414 / 572;
+    transform: none;
+  }
+  .step-try .step-phone video { object-fit: contain; background: #e9e9e7; }
+  .step-try .step-sheet {
+    position: relative;
+    inset: auto;
+    width: min(300px, 100%);
+    transform: none;
+  }
   .store-card, .store-card-back { width: 280px; }
 }
 
