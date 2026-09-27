@@ -10,7 +10,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 function config(env) {
   const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
   return {
-    trialSeconds: Number(env.TRIAL_SECONDS || 60),
+    trialSeconds: Number(env.TRIAL_SECONDS || 30),
     googleClientId: env.GOOGLE_CLIENT_ID || '',
     googleClientSecret: env.GOOGLE_CLIENT_SECRET || '',
     googleEnabled,
@@ -286,7 +286,7 @@ async function handle(request, env, url) {
           expiresIn: 300, // token TTL; the live session length is capped below
           allowedModels: [cfg.decartModel, 'lucy-vton-latest'],
           allowedOrigins: [url.origin],
-          constraints: { realtime: { maxSessionDuration: cfg.trialSeconds + 30 } },
+          constraints: { realtime: { maxSessionDuration: cfg.trialSeconds + 10 } },
         }),
       });
       const data = await r.json().catch(() => ({}));

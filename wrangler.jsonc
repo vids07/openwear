@@ -28,7 +28,7 @@
   // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) go in with `wrangler secret put`,
   // or in .dev.vars for local development.
   "vars": {
-    "TRIAL_SECONDS": "60"
+    "TRIAL_SECONDS": "30"
   },
 
   "routes": [{ "pattern": "tryon.indiclabs.ai", "custom_domain": true }]

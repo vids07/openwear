@@ -36,7 +36,7 @@ const CONTACT_URL = 'https://cal.com/indiclabs-m02a0z/30min';
 const SESSION_CACHE_KEY = 'lookon.session';
 
 // ── Session state (server is the source of truth; localStorage is a hint) ──
-let session = readCachedSession() || { signedIn: false, eligible: false, trialSeconds: 60, googleEnabled: false, devLoginEnabled: true, liveTryOn: false };
+let session = readCachedSession() || { signedIn: false, eligible: false, trialSeconds: 30, googleEnabled: false, devLoginEnabled: true, liveTryOn: false };
 let pendingGarment = null;
 
 // The in-flight trial.
@@ -103,7 +103,7 @@ const showReady = () => {
   tryonTitle.textContent = idle.title;
   tryonCopy.textContent = idle.copy;
   tryonNote.textContent = '';
-  const secs = session.trialSeconds || 60;
+  const secs = session.trialSeconds || 30;
   cameraButton.textContent = `Turn on camera · ${secs}s free try`;
   cameraButton.dataset.role = 'camera';
   cameraButton.hidden = false;
@@ -245,7 +245,7 @@ async function beginTrial() {
   cameraButton.hidden = true;
 
   // 3) Connect the realtime try-on (or a plain preview if no key is set).
-  const deadline = start.body.expiresAt ? start.body.expiresAt * 1000 : Date.now() + (start.body.expiresIn || 60) * 1000;
+  const deadline = start.body.expiresAt ? start.body.expiresAt * 1000 : Date.now() + (start.body.expiresIn || 30) * 1000;
   await startRealtime(activeSessionId, activeGarment, deadline);
 }
 
