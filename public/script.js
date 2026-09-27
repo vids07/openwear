@@ -405,19 +405,32 @@ signupSheet.addEventListener('close', () => { pendingGarment = null; });
 // Generic "Try it on" CTAs nudge shoppers to the garment grid; only a garment
 // tile actually opens the try-on.
 let demoPromptTimeout;
+let demoPromptObserver;
 function hideDemoPrompt() {
   clearTimeout(demoPromptTimeout);
+  demoPromptObserver?.disconnect();
+  demoPromptObserver = null;
   if (demoPrompt) demoPrompt.hidden = true;
+  demoSection?.classList.remove('is-choosing');
 }
 
 function showGarmentChoices() {
-  clearTimeout(demoPromptTimeout);
-  if (demoPrompt) demoPrompt.hidden = false;
+  hideDemoPrompt();
   demoSection?.scrollIntoView({
-    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     block: 'start',
   });
-  demoPromptTimeout = setTimeout(hideDemoPrompt, 4000);
+  const firstGarment = $('.garment');
+  if (!firstGarment || !demoPrompt) return;
+  demoPromptObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    demoPrompt.hidden = false;
+    demoSection?.classList.add('is-choosing');
+    demoPromptObserver?.disconnect();
+    demoPromptObserver = null;
+    demoPromptTimeout = setTimeout(hideDemoPrompt, 6000);
+  }, { threshold: .1 });
+  demoPromptObserver.observe(firstGarment);
 }
 
 $$('.open-tryon').forEach((button) =>
