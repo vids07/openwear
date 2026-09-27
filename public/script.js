@@ -22,6 +22,7 @@ const video = $('#tryon-video');
 const garmentShot = $('#tryon-garment');
 const cameraButton = $('#camera-demo');
 const tryonIcon = $('#tryon-icon');
+const tryonPreviewGarment = $('#tryon-preview-garment');
 const tryonTitle = $('#tryon-title');
 const tryonCopy = $('#tryon-copy');
 const tryonNote = $('#tryon-note');
@@ -82,8 +83,7 @@ function applySignupOptions() {
 // ── Try-on modal states ─────────────────────────────────────────────
 const idle = {
   title: 'Try it on',
-  copy: 'Turn on your camera and watch this garment render onto you, live and moving with you.',
-  note: 'Your camera runs on your device only — nothing is uploaded, recorded, or sent anywhere.',
+  copy: 'See this garment on you, live.',
 };
 
 let stream = null;
@@ -102,9 +102,7 @@ const showReady = () => {
   tryonIcon.hidden = false;
   tryonTitle.textContent = idle.title;
   tryonCopy.textContent = idle.copy;
-  tryonNote.textContent = session.liveTryOn
-    ? 'Your camera streams to the try-on engine and the garment renders on you in real time.'
-    : idle.note;
+  tryonNote.textContent = '';
   const secs = session.trialSeconds || 60;
   cameraButton.textContent = `Turn on camera · ${secs}s free try`;
   cameraButton.dataset.role = 'camera';
@@ -384,8 +382,15 @@ function endTrial(sessionId) {
 // ── Opening flows ────────────────────────────────────────────────────
 function setGarment(garmentSrc) {
   const src = garmentSrc || $('.garment img')?.src;
-  if (src) { garmentShot.src = src; garmentShot.hidden = false; }
-  else garmentShot.hidden = true;
+  if (src) {
+    garmentShot.src = src;
+    garmentShot.hidden = false;
+    tryonPreviewGarment.src = src;
+    tryonPreviewGarment.hidden = false;
+  } else {
+    garmentShot.hidden = true;
+    tryonPreviewGarment.hidden = true;
+  }
 }
 
 function openTryon(garmentSrc) {
